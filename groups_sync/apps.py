@@ -9,4 +9,4 @@ class GroupsSyncConfig(AppConfig):
 
         settings = settings._wrapped.__dict__
 
-        settings.setdefault('GROUP_SYNC_FILENAME', 'groups_perms.json')
+        settings.setdefault('GROUP_SYNC_FILENAME', 'groups_permissions.json')

@@ -37,7 +37,7 @@ INSTALLED_APPS = (
 
 * **GROUP_SYNC_FILENAME**
 
-  Filename (and location) of JSON file for export/sync, default value `groups_perms.json`.
+  Filename (and location) of JSON file for export/sync, default value `groups_permissions.json`.
 
 
 ## Usage

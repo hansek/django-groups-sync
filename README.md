@@ -81,6 +81,8 @@ $ python manage.py sync_groups_permissions
 
    * `--noinput` or `--no-input` - do NOT prompt the user for input of any kind
 
+   * `--dry-run` or `-n` - do everything except modify the database
+
 
 ## Credits
 

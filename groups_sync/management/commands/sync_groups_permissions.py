@@ -22,9 +22,18 @@ class Command(BaseCommand):
             '--noinput', '--no-input', action='store_false', dest='interactive',
             help="Do NOT prompt the user for input of any kind.",
         )
+        parser.add_argument(
+            '-n', '--dry-run', action='store_true',
+            help="Do everything except modify the database.",
+        )
 
-    def handle(self, *group_names, interactive, verbosity, **options):
+    def handle(self, *group_names, interactive, verbosity, dry_run, **options):
         message = []
+
+        if dry_run:
+            print(
+                '\nYou have activated the --dry-run option so nothing will be modified.\n'
+            )
 
         try:
             filepath = options.get('file') or settings.GROUP_SYNC_FILENAME
@@ -57,21 +66,23 @@ class Command(BaseCommand):
         groups_to_create = set(group_names).difference(groups)
         groups_to_sync = set(group_names) - groups_to_create
 
-        if verbosity:
-            if groups_to_create:
-                message.append('Groups to be created: {}'.format(
-                    '; '.join(groups_to_create)
-                ))
+        if not dry_run and interactive:
+            if verbosity:
+                message.append('')
 
-            if groups_to_sync:
-                message.append('Groups to be synced: {}'.format(
-                    '; '.join(groups_to_sync)
-                ))
+                if groups_to_create:
+                    message.append('Groups to be created: {}'.format(
+                        '; '.join(groups_to_create)
+                    ))
 
-            print('\n'.join(message))
-            message = ['']
+                if groups_to_sync:
+                    message.append('Groups to be synced: {}'.format(
+                        '; '.join(groups_to_sync)
+                    ))
 
-        if interactive:
+                print('\n'.join(message))
+                message = ['']
+
             if input('\nDo you want to sync? [type "yes" to continue] ') != 'yes':
                 print()
                 raise CommandError('Group sync cancelled.')
@@ -133,16 +144,32 @@ class Command(BaseCommand):
             ###################################################################
             # do the main sync
 
-            g, group_created = Group.objects.get_or_create(name=g_name)
+            if dry_run:
+                if g_name in groups_to_create:
+                    g = Group(name=g_name)
+                    group_created = True
 
-            to_create = set(permissions).difference(g.permissions.all())
+                else:
+                    g = Group.objects.get(name=g_name)
+                    group_created = False
 
-            g.permissions.add(*to_create)
+            else:
+                g, group_created = Group.objects.get_or_create(name=g_name)
 
-            to_remove = set(g.permissions.all()) - set(permissions)
+            if group_created:
+                to_create = permissions
+            else:
+                to_create = set(permissions).difference(g.permissions.all())
 
-            if not group_created and to_remove:
-                g.permissions.remove(*to_remove)
+            if not dry_run:
+                g.permissions.add(*to_create)
+
+            to_remove = []
+            if not group_created:
+                to_remove = set(g.permissions.all()) - set(permissions)
+
+                if not dry_run and to_remove:
+                    g.permissions.remove(*to_remove)
 
             if verbosity and (to_create or to_remove):
                 group_state = 'synced'

@@ -60,7 +60,7 @@ $ python manage.py export_groups_permissions
 
          $ python manage.py export_groups_permissions "Group 1" "Group 2"
 
-   * `-o` or `--output` - specifies file to which the output is written (default value by `GROUP_SYNC_FILENAME`)
+   * `--file` - specifies file to which the output is written (default value by `GROUP_SYNC_FILENAME`)
 
 
 ### Synchronize groups permissions
@@ -76,6 +76,8 @@ $ python manage.py sync_groups_permissions
    * A Group name(s) which should only be synchronized (use "" if there are spaces in Group name).
 
          $ python manage.py export_groups_permissions "Group 1" "Group 2"
+
+   * `--file` - specifies json data file (default value by `GROUP_SYNC_FILENAME`)
 
    * `--noinput` or `--no-input` - do NOT prompt the user for input of any kind
 

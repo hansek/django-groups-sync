@@ -15,6 +15,10 @@ class Command(BaseCommand):
             help='A Group name which should only be synchronized (use "" if there are spaces in Group name).',
         )
         parser.add_argument(
+            '--file', dest='file',
+            help='Specifies json data file.'
+        )
+        parser.add_argument(
             '--noinput', '--no-input', action='store_false', dest='interactive',
             help="Do NOT prompt the user for input of any kind.",
         )
@@ -23,11 +27,14 @@ class Command(BaseCommand):
         message = []
 
         try:
-            with open(settings.GROUP_SYNC_FILENAME) as file:
+            filepath = options.get('file') or settings.GROUP_SYNC_FILENAME
+
+            with open(filepath) as file:
                 file_data = json.load(file)
+
         except FileNotFoundError as e:
             raise CommandError('File "{}" not found.'.format(
-                settings.GROUP_SYNC_FILENAME
+                filepath
             ))
 
         data_groups = file_data['groups'].keys()

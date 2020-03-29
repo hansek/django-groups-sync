@@ -15,16 +15,11 @@ class Command(BaseCommand):
             help='A Group name which should only be exported (use "" if there are spaces in Group name).',
         )
         parser.add_argument(
-            '-o', '--output',
-            help='Specifies file to which the output is written.'
+            '--file', dest='file',
+            help='Specifies file to which the json output is written.'
         )
 
     def handle(self, *group_names, verbosity, **options):
-        output = options['output']
-
-        if not output:
-            output = settings.GROUP_SYNC_FILENAME
-
         data = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(list))))
 
         permissions_count = defaultdict(int)
@@ -49,7 +44,9 @@ class Command(BaseCommand):
 
         # return json.dumps(data, indent=4, sort_keys=True)
 
-        with open(output, 'w') as file:
+        filepath = options.get('file') or settings.GROUP_SYNC_FILENAME
+
+        with open(filepath, 'w') as file:
             json.dump(data, file, indent=4, sort_keys=True)
 
         if verbosity:
@@ -64,5 +61,5 @@ class Command(BaseCommand):
                 ))
 
             print()
-            print('Export saved in file "{}"'.format(output))
+            print('Export saved in file "{}"'.format(filepath))
 

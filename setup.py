@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="groups_sync",
-    version="0.0.3",
+    name="django-groups-sync",
+    version="0.0.4",
     author="Jan Tezner",
     author_email="jan.tezner@gmail.com",
     description="A set of management commands to export and sync Django User Groups permissions between environments.",

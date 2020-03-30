@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="django-groups-sync",
-    version="0.0.6",
+    version="0.0.7",
     author="Jan Tezner",
     author_email="jan.tezner@gmail.com",
     description="A set of management commands to export and sync Django User Groups permissions between environments.",

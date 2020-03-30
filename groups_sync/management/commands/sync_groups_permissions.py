@@ -177,9 +177,16 @@ class Command(BaseCommand):
                 if group_created:
                     group_state = 'created'
 
-                message.append('Group "{}" {}:'.format(
+                if dry_run and group_created:
+                    permissions_count = len(permissions)
+
+                else:
+                    permissions_count = g.permissions.count()
+
+                message.append('Group "{}" {} and has {} permissions:'.format(
                     g.name,
                     group_state,
+                    permissions_count,
                 ))
 
                 message.append(' - assigned: {} permissions'.format(len(to_create)))
@@ -189,7 +196,10 @@ class Command(BaseCommand):
 
             else:
                 if verbosity:
-                    message.append('Group "{}" already in sync.'.format(g.name))
+                    message.append('Group "{}" already in sync and has {} permissions.'.format(
+                        g.name,
+                        g.permissions.count(),
+                    ))
 
         if verbosity:
             message.append('\nDone...')
